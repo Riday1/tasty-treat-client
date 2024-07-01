@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../assets/logo.png'
+import logo from '../../assets/company_logo.png'
+import { AuthContext } from '../AuthProvider/AuthProvider';
+
+
+
 const Header = () => {
+    const { user, logOut } = useContext(AuthContext)
+
+    const handleLogOut = () => {
+        logOut()
+    }
     return (
         <div className="navbar bg-gray-200 shadow-lg">
             <div className="navbar-start">
@@ -25,27 +34,42 @@ const Header = () => {
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                         <li><Link to='/'>Home</Link></li>
                         <li><Link to='/orders'>Orders</Link></li>
-                        <li><Link to='/checkout'>Checkout</Link></li>
                         <li><Link to='/login'>Login</Link></li>
                         <li><Link to='/register'>Register</Link></li>
+                        <li><Link to='/best-deal'>Best-Deal</Link></li>
+                        <li><Link to='/about-us'>About-Us</Link></li>
                     </ul>
                 </div>
                 <Link to={'/'} className="">
-                    {/* <img src={logo} className='w-20' alt="" /> */}
-                    Tasty Treat
+                    <img src={logo} className='h-14 rounded-md' alt="" />
+
                 </Link>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
                     <li><Link to='/'>Home</Link></li>
                     <li><Link to='/orders'>Orders</Link></li>
-                    <li><Link to='/checkout'>Checkout</Link></li>
-                    <li><Link to='/login'>Login</Link></li>
-                    <li><Link to='/register'>Register</Link></li>
+                    <li><Link to='/about-us'>About-Us</Link></li>
+                    <li><Link to='/best-deal'>Best-Deal</Link></li>
                 </ul>
             </div>
             <div className="navbar-end">
-                <Link to={'/'} className="btn">Button</Link>
+                {
+                    user?.email ?
+                        <>
+                            <div className="avatar">
+                                <div className="ring-primary ring-offset-base-100 w-8 rounded-full ring ring-offset-2">
+                                    <img src={user?.photoURL} alt='' />
+                                </div>
+                            </div>
+                            <button onClick={handleLogOut} className='btn btn-primary btn-sm ml-6'>Logout</button>
+                        </>
+                        :
+                        <><Link className='btn btn-primary btn-sm' to='/login'>Login</Link>
+                            <Link className='ml-8 btn btn-warning btn-sm' to='/register'>Register</Link>
+                        </>
+                }
+
             </div>
         </div>
     );
