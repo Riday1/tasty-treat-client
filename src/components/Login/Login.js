@@ -5,12 +5,12 @@ import googleIcon from '../../assets/social-icon/google.png'
 import githubIcon from '../../assets/social-icon/github.png'
 import twitterIcon from '../../assets/social-icon/twitter.png'
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import Swal from 'sweetalert2'
 
 
 const Login = () => {
 
-    const { signIn } = useContext(AuthContext)
+    const { signIn, forgetPassword, setUser } = useContext(AuthContext)
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -21,27 +21,39 @@ const Login = () => {
         const email = form.email.value;
         const password = form.password.value;
 
-        console.log(email, password)
 
         signIn(email, password)
             .then(result => {
                 const user = result.user;
-                console.log(user)
                 const currentUser = { email: user.email }
-                form.reset()
-                fetch(`http://localhost:5000/jwt`, {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify(currentUser)
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log(data.token)
-                        localStorage.setItem('access-token', data.token)
+                console.log(user)
+                setUser(user)
+                if (user.emailVerified) {
+                    form.reset()
+                    fetch(`https://tasty-treat-server.vercel.app/jwt`, {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                        body: JSON.stringify(currentUser)
                     })
-                navigate(from, { replace: true })
+                        .then(res => res.json())
+                        .then(data => {
+
+                            localStorage.setItem('access-token', data.token)
+                        })
+                    Swal.fire({
+                        title: 'Login Successfully',
+                        icon: 'success',
+                    })
+                    navigate(from, { replace: true })
+                }
+                else {
+                    Swal.fire({
+                        title: 'Please Verify Email',
+                        icon: 'error',
+                    })
+                }
             })
             .catch(err => console.error(err))
 

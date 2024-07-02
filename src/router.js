@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/cakes/:id',
-                loader: ({ params }) => fetch(`http://localhost:5000/cakes/${params.id}`),
+                loader: ({ params }) => fetch(`https://tasty-treat-server.vercel.app/cakes/${params.id}`),
                 element: <Checkout></Checkout>
             },
             {

@@ -35,7 +35,7 @@ const Checkout = () => {
         form.reset()
         console.log(order)
 
-        fetch('http://localhost:5000/orders', {
+        fetch('https://tasty-treat-server.vercel.app/orders', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'

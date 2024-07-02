@@ -5,10 +5,10 @@ import googleIcon from '../../assets/social-icon/google.png'
 import githubIcon from '../../assets/social-icon/github.png'
 import twitterIcon from '../../assets/social-icon/twitter.png'
 import { AuthContext } from '../AuthProvider/AuthProvider';
-
+import Swal from 'sweetalert2'
 
 const Register = () => {
-    const { createUser, updateUser } = useContext(AuthContext);
+    const { createUser, updateUser, verifyEmail } = useContext(AuthContext);
     const [disable, setDisable] = useState(true)
     const navigate = useNavigate()
     const handleSubmit = (event) => {
@@ -24,17 +24,37 @@ const Register = () => {
         createUser(email, password)
             .then(result => {
                 const user = result.user;
-                console.log(user)
+
                 updateUser(name, photoURL)
-                form.reset()
+
+                console.log(user)
+                verifyEmail()
+                    .then(() => {
+                        Swal.fire({
+                            title: 'Verify Email',
+                            icon: 'info',
+                        })
+                    })
                 navigate('/login')
+                form.reset()
             })
-            .catch(err => console.log(err))
+            .catch(error => {
+                let errorMessage = error.message;
+                errorMessage = errorMessage.split('/')[1]
+                errorMessage = errorMessage.split(')')[0]
+                if (errorMessage) {
+                    Swal.fire({
+                        title: `${errorMessage}`,
+                        icon: 'error',
+                    })
+                }
+
+            })
     }
 
     const handleCheckBox = event => {
         setDisable(!event.target.checked)
-        console.log(!event.target.checked)
+
     }
     return (
         <div className="hero bg-base-200 min-h-screen">
